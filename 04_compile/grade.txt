@@ -1,0 +1,13 @@
+Grading at Thu Jul 16 23:34:59 UTC 2020
+Compiling your code
+hello.c:3:6: error: return type of ‘main’ is not ‘int’ [-Werror=main]
+ void main()
+      ^
+hello.c: In function ‘main’:
+hello.c:6:10: error: ‘return’ with a value, in function returning void [-Werror]
+   return EXIT_SUCCESS;
+          ^
+cc1: all warnings being treated as errors
+Your code did not compile
+
+Overall Grade: FAILED
