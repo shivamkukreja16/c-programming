@@ -1,10 +1,10 @@
-#include<stdlib.h>
 #include<stdio.h>
+#include<stdlib.h>
 
 struct _retire_info{
   int months;
-  double contribution;
-  double rate_of_return;
+  float contribution;
+  float rate_of_return;
 };
 typedef struct _retire_info retire_info;
 
@@ -12,7 +12,7 @@ typedef struct _retire_info retire_info;
 void retirement(int startAge, double initial,
 		retire_info working, retire_info retired)
 {
-  double balance = initial;
+  float balance = initial;
   for (int i = 0; i < working.months; i++)
     {
       printf("Age %3d month %2d you have $%.21f\n",
@@ -35,7 +35,7 @@ int main(void){
   retire_info retired = {.months = 384, .contribution = -4000, .rate_of_return = 0.01/12};
 
   int initial_age = 327;
-  double initial_savings = 21345;
+  float initial_savings = 21345;
 
   retirement(initial_age, initial_savings, working, retired);
 
