@@ -1,6 +1,6 @@
-Grading at Mon Jul 27 15:46:28 UTC 2020
+Grading at Mon Jul 27 19:59:47 UTC 2020
 Attempting to compile breaker.c 
-make: 'breaker' is up to date.
+gcc -o breaker -Wall -Werror -pedantic -std=gnu99 -g breaker.c
 testcase1 passed
 #################################################
 testcase2:
