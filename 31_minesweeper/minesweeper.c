@@ -42,9 +42,32 @@ void addRandomMine(board_t * b) {
 
 board_t * makeBoard(int w, int h, int numMines) {
   //WRITE ME!
-  return NULL;
+  board_t * b = malloc(sizeof(*b));
+  b -> width = w;
+  b -> height = h;
+  b -> totalMines = numMines;
+  b -> board = malloc(h * sizeof(*(b->board)));
+  for (size_t i = 0; i < h; i++) {
+    b->board[i] = malloc(w * sizeof(**(b->board)));
+    for (size_t j = 0; j < w; j++) {
+      b->board[i][j] = UNKNOWN;
+    }
+  }
+
+  for (size_t i = 0; i < numMines; i++) {
+    addRandomMine(b);
+  }
+  /*
+  for (size_t i = 0; i < b->height; i++) {
+    for(size_t j = 0; j < b->width; j++) {
+      printf("%d",b->board[i][j]);
+    }
+    printf("\n");
+  }
+  */
+  return b;
 }
-void printBoard(board_t * b) {    
+void printBoard(board_t * b) {
   int found = 0;
   printf("    ");
   for (int x = 0; x < b->width; x++) {
@@ -96,7 +119,19 @@ void printBoard(board_t * b) {
 }
 int countMines(board_t * b, int x, int y) {
   //WRITE ME!
-  return 0;
+  int count = 0;
+
+  for (size_t i = (0 == x ? x : x - 1); i <= (b->width - 1 == x ? x : x + 1); i++) {
+    for (size_t j = (0 == y ? y : y - 1); j <= (b->height - 1 == y ? y : y + 1); j++) {
+      if (i == x && j == y) {
+	continue;
+      }
+      if (IS_MINE(b->board[j][i])) {
+	count++;
+      }
+    }
+  }
+  return count;
 }
 int click (board_t * b, int x, int y) {
   if (x < 0 || x >= b->width ||
@@ -119,11 +154,23 @@ int click (board_t * b, int x, int y) {
 
 int checkWin(board_t * b) {
   //WRITE ME!
-  return 0;
+  for (size_t i = 0; i < b->height; i++) {
+    for(size_t j = 0; j < b->width; j++) {
+      if(UNKNOWN == b->board[i][j]) {
+	return 0;
+      }
+    }
+  }
+  return 1;
 }
 
 void freeBoard(board_t * b) {
   //WRITE ME!
+  for (size_t i = 0; i < b->height; i++) {
+    free(b->board[i]);
+  }
+  free(b->board);
+  free(b);
 }
 
 int readInt(char ** linep, size_t * lineszp) {
@@ -139,7 +186,7 @@ int readInt(char ** linep, size_t * lineszp) {
     return readInt (linep, lineszp);
   }
   if (*endptr != '\n') {
-    fprintf( stderr, 
+    fprintf( stderr,
 	     "Input was not entirely a number (junk at end)\n");
     printf ("Please try again\n");
     return readInt (linep, lineszp);
@@ -162,7 +209,7 @@ void doReveal(board_t * b, int x, int y, int revealMines){
 	if (revealMines) {
 	  assert(b->board[ny][nx] != UNKNOWN);
 	  if (b->board[ny][nx] == HAS_MINE){
-	    b->board[ny][nx] = KNOWN_MINE; 
+	    b->board[ny][nx] = KNOWN_MINE;
 	  }
 	}
 	else  {
@@ -185,7 +232,7 @@ int maybeReveal(board_t * b, int x, int y) {
       int ny = y + dy;
       if (nx >= 0 && nx < b->width &&
 	  ny >= 0 && ny < b->height) {
-	if (b->board[ny][nx] == UNKNOWN || 
+	if (b->board[ny][nx] == UNKNOWN ||
 	    b->board[ny][nx] == HAS_MINE) {
 	  unknownSquares++;
 	}
@@ -198,7 +245,7 @@ int maybeReveal(board_t * b, int x, int y) {
   assert(knownMines + unknownSquares >= b->board[y][x]);
   assert(knownMines <= b->board[y][x]);
   if (unknownSquares > 0) {
-    int revealMines = (knownMines + unknownSquares == 
+    int revealMines = (knownMines + unknownSquares ==
 		       b->board[y][x]);
     int allKnown = knownMines == b->board[y][x];
     if(revealMines || allKnown) {
