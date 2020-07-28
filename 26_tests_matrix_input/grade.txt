@@ -1,5 +1,0 @@
-Grading at Tue Jul 28 15:52:40 UTC 2020
-Checking rotateMatrix1
-***Your tests failed to show that rotateMatrix1 was broken!
-
-Overall Grade: FAILED
