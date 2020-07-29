@@ -2,97 +2,138 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <ctype.h>
+#include <string.h>
 #include "cards.h"
 #include "deck.h"
 #include "eval.h"
 #include "future.h"
 #include "input.h"
 
-
-int win_hand(deck_t ** deck_array,int n_hands){
-  int w[n_hands+1];
-  for(int u=0;u<n_hands+1;u++) w[u]=0;
-  int v=0;
-  for(int i =0;i<n_hands-1;i++){
-    for (int j=i+1;j<n_hands;j++){
-      // print_hand(deck_array[i]);
-      //            print_hand(deck_array[j]);
-      // printf("\n");
-      v=compare_hands(deck_array[i],deck_array[j]);
-      if(v>0) w[i]++;
-      else if (v<0) w[j]++;
-      else w[n_hands]++;
-    }
-  }
-  unsigned largest= 0;
-  for(int x=0;x<n_hands+1;x++){
-    if(w[x] > w[largest])largest=x;
-  }
-  int count=0;
-  if(w[n_hands]>0){
-    for(int x=0;x<n_hands+1;x++){
-      if(w[x] == w[largest]) count++;
-    }
-  }
-  if(count>1) return n_hands;
-  return  largest;
+long int check_value(const char * string) {
+  char * endptr = NULL;
+  long int ans = strtol(string,&endptr,10);
+  if (endptr == string) { return -1; }
+  if (*endptr != '\0') { return -1; }
+  return ans;
 }
 
-int main(int argc, char ** argv) {
-  //YOUR CODE GOES HERE
-  //check arguments
-  if (argc < 2 ){
-    fprintf(stderr, "not enough number of arguments\n");
-    return EXIT_FAILURE ;
+long int * run_a_simulation(const char * fileName, long int nTrials, size_t * size) {
+  FILE * f = fopen(fileName,"r");
+  if (f == NULL) {
+    perror("Could not open the input file!");
+    exit(EXIT_FAILURE);
   }
-  //Open the input file and read the hands in it
-  FILE* f=fopen(argv[1],"r");
-  if(f == NULL) {
-    fprintf(stderr, "not valid  input file\n");
-    return EXIT_FAILURE ;
+  size_t nHands;
+  future_cards_t * fc = malloc(sizeof(*fc));
+  fc->decks = NULL;
+  fc->n_decks = 0;
+  deck_t ** inputHands = read_input(f,&nHands,fc);
+  *size = nHands;
+  deck_t * remainingDeck = build_remaining_deck(inputHands,nHands);
+  long int * wins = malloc((nHands+1)*sizeof(*wins));
+  for (size_t i = 0; i < nHands+1; i++) {
+    wins[i] = 0;
   }
-  deck_t ** deck_array=NULL;
-  size_t n_hands =0 ;
-  future_cards_t * fc=malloc(sizeof(*fc));
-  fc->decks=NULL;
-  fc->n_decks=0;
-  deck_array=read_input(f,&n_hands,fc);
-  //Create a deck with the remaining cards
-  deck_t* sh=build_remaining_deck(deck_array, n_hands);
-  int win_array[n_hands+1];
-  for(int u=0;u<n_hands+1;u++) win_array[u]=0;
-  // Do each Monte Carlo trial (repeat num_trials times)
-  int num_trials = 10000;
-  if (argc ==3) num_trials=atoi(argv[2]);
-  for(int i=0;i<num_trials;i++){
-    //Shuffle the deck of remaining cards
-    shuffle(sh);
-    //Assign unknown cards from the shuffled deck
-    future_cards_from_deck(sh,fc);
-    //Use compare_hands (from Course 3)
-    int c =win_hand(deck_array,n_hands);
-    win_array[c]++;
+  for (long int trial = 0; trial < nTrials; trial++) {
+    shuffle(remainingDeck);
+    future_cards_from_deck(remainingDeck,fc);
+    size_t bestHand = 0;
+    int tie = 0;
+    int currentResult;
+    for (size_t j = 1; j < nHands; j++) {
+      currentResult = compare_hands(inputHands[j],inputHands[bestHand]);
+      if (currentResult > 0) {
+	bestHand = j;
+	tie = 0;
+      }
+      else if (currentResult == 0) {
+	tie = 1;
+      }
+    }
+    if (tie) { (wins[nHands])++; }
+    else { (wins[bestHand])++; }
   }
-  //you just need to print your results
-  for(size_t j=0;j<n_hands;j++){
-    printf("Hand %zu won %u / %u times (%.2f%%)\n",j,win_array[j],num_trials,(((float)win_array[j])/num_trials)*100);
-  }
-  printf( "And there were %u ties\n",win_array[n_hands]);
-  //free any memory you allocated
-  for(int x=0;x<n_hands;x++){
-    free_deck(deck_array[x]);
-  }
-  free(deck_array);
-  for(int o=fc->n_decks-1 ;o>=0;o--){
-    if(fc->decks[o].n_cards != 0) free(fc->decks[o].cards);
+  for (size_t count1 = 0; count1 < fc->n_decks; count1++) {
+    free(fc->decks[count1].cards);
   }
   free(fc->decks);
   free(fc);
-  free_deck(sh);
+  for (size_t count2 = 0; count2 < nHands; count2++) {
+    free_deck(inputHands[count2]);
+  }
+  free(inputHands);
+  free_deck(remainingDeck);
+  if (fclose(f) != 0) {
+    perror("Could not close the input file!");
+    exit(EXIT_FAILURE);
+  }
+  return wins;
+}
 
-  if(fclose(f) != 0){
-    fprintf(stderr, "close file");
+int main(int argc, char ** argv) {
+  if ((argc<2)||(argc>3)) {
+    fprintf(stderr,"Usage: poker inputFileName (numberOfTrials)\n");
     return EXIT_FAILURE;
+  }
+  long int nTrials;
+  if (argc == 3) {
+    nTrials = check_value(argv[2]);
+    if (nTrials <= 0) {
+      fprintf(stderr,"numberOfTrials must be a positive integer!\n");
+      return EXIT_FAILURE;
+    }
+  }
+  else {
+    nTrials = 10000;
+  }
+  int debug = 0;
+  if (!strcmp(argv[1],"-debug")) { debug = 1; }
+  if (!debug) {
+    size_t size;
+    long int * wins = run_a_simulation(argv[1],nTrials,&size);
+    for (size_t k = 0; k < size; k++) {
+      printf("Hand %zu won %u / %u times (%.2f%%)\n",
+	     k,(unsigned int)wins[k],(unsigned int)nTrials,100*(wins[k]/(float)nTrials));
+    }
+    printf("And there were %u ties\n",(unsigned int)wins[size]);
+    free(wins);
+  }
+  else {
+    const char * dirPath = "./provided-tests/";
+    const char * prefix = "test";
+    const char * suffix = ".txt";
+    char number[] = "00";
+    char * fileName = malloc((strlen(dirPath)+strlen(prefix)+2+strlen(suffix)+1)*sizeof(*fileName));
+    FILE * outFile = fopen("./provided-tests/my_answers.txt","w");
+    if (outFile == NULL) {
+      perror("Could not open the output file!");
+      exit(EXIT_FAILURE);
+    }
+    for (char n = 1; n <= 16; n++) {
+      char n1 = n/10 + '0';
+      char n2 = n - (n/10)*10 + '0';
+      number[0] = n1;
+      number[1] = n2;
+      strcat(strcat(strcat(strcpy(fileName,dirPath),prefix),number),suffix);
+      size_t size;
+      long int * wins = run_a_simulation(fileName,nTrials,&size);
+      fprintf(outFile,"%s%s%s: ",prefix,number,suffix);
+      for (size_t k = 0; k < size-1; k++) {
+	fprintf(outFile,"Hand %zu = %0.f%%,",k,100*(wins[k]/(float)nTrials));
+	if (100*(wins[k]/(float)nTrials)<99.5) { fprintf(outFile," "); }
+	if (100*(wins[k]/(float)nTrials)<9.5) { fprintf(outFile," "); }
+	if ((k % 3) == 0) { fprintf(outFile," "); }
+	if ((k % 3) == 2) { fprintf(outFile,"\n            "); }
+      }
+      fprintf(outFile,"Hand %zu = %0.f%%\t",size-1,100*(wins[size-1]/(float)nTrials));
+      fprintf(outFile,"\n");
+      free(wins);
+    }
+    free(fileName);
+    if (fclose(outFile) != 0) {
+      perror("Could not close the output file!");
+      exit(EXIT_FAILURE);
+    }
   }
   return EXIT_SUCCESS;
 }
