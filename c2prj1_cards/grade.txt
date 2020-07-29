@@ -1,47 +1,25 @@
-Grading at Wed Jul 29 18:54:13 UTC 2020
+Grading at Wed Jul 29 18:57:41 UTC 2020
 Compiling cards.c
-cards.c:166:3: error: stray ‘#’ in program
-  }#include <stdio.h>
-   ^
-cards.c:166:12: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘<’ token
-  }#include <stdio.h>
-            ^
-cards.c:183:15: error: redefinition of ‘ranking_to_string’
-  const char * ranking_to_string(hand_ranking_t r) {
-               ^
-cards.c:18:15: note: previous definition of ‘ranking_to_string’ was here
-  const char * ranking_to_string(hand_ranking_t r) {
-               ^
-cards.c:203:7: error: redefinition of ‘value_letter’
-  char value_letter(card_t c) {
-       ^
-cards.c:38:7: note: previous definition of ‘value_letter’ was here
-  char value_letter(card_t c) {
-       ^
-cards.c:233:7: error: redefinition of ‘suit_letter’
-  char suit_letter(card_t c) {
-       ^
-cards.c:68:7: note: previous definition of ‘suit_letter’ was here
-  char suit_letter(card_t c) {
-       ^
-cards.c:251:7: error: redefinition of ‘print_card’
-  void print_card(card_t c) {
-       ^
-cards.c:86:7: note: previous definition of ‘print_card’ was here
-  void print_card(card_t c) {
-       ^
-cards.c:268:9: error: redefinition of ‘card_from_letters’
-  card_t card_from_letters(char value_let, char suit_let) {
-         ^
-cards.c:103:9: note: previous definition of ‘card_from_letters’ was here
-  card_t card_from_letters(char value_let, char suit_let) {
-         ^
-cards.c:322:9: error: redefinition of ‘card_from_num’
-  card_t card_from_num(unsigned c) {
-         ^
-cards.c:157:9: note: previous definition of ‘card_from_num’ was here
-  card_t card_from_num(unsigned c) {
-         ^
-Could not compile your card.c!
+Testing card_from_letters
+Passed
+Testing value_letter and suit_letter
+Passed
+Testing print_card
+Passed
+Testing card_from_num
+Passed
+Testing ranking_to_string
+ranking_to_string(STRAIGHT_FLUSH) resulted in STRAIGHT_FLUSH  (Correct)
+ranking_to_string(FOUR_OF_A_KIND) resulted in FOUR_OF_A_KIND  (Correct)
+ranking_to_string(FULL_HOUSE) resulted in FULL_HOUSE  (Correct)
+ranking_to_string(FLUSH) resulted in FLUSH  (Correct)
+ranking_to_string(STRAIGHT) resulted in STRAIGHT  (Correct)
+ranking_to_string(THREE_OF_A_KIND) resulted in THREE_OF_A_KIND  (Correct)
+ranking_to_string(TWO_PAIR) resulted in TWO_PAIR  (Correct)
+ranking_to_string(PAIR) resulted in PAIR  (Correct)
+ranking_to_string(NOTHING) resulted in NOTHING  (Correct)
+Passed
+Testing assert_card_valid
+Passed
 
-Overall Grade: FAILED
+Overall Grade: PASSED
