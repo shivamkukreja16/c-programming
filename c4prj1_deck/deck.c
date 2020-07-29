@@ -12,6 +12,7 @@ void print_hand(deck_t * hand){
   }
 }
 
+
 int deck_contains(deck_t * d, card_t c) {
   //This function should check if a deck contains a particular card or not.
   //If the deck does contain the card, this function should return 1. Otherwise, return 0.
