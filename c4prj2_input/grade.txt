@@ -1,21 +1,28 @@
-Grading at Wed Jul 29 11:00:27 UTC 2020
+Grading at Wed Jul 29 11:06:59 UTC 2020
 Compiling cards.c -> cards.o
 Compiling deck.c -> deck.o
 Compiling input.c -> input.o
 Compiling future.c -> future.o
 Linking input.o, future.o deck.o, cards.o, and our tester
-input.o: In function `hand_from_string':
-input.c:(.text+0x277): undefined reference to `add_card_to'
-input.c:(.text+0x32d): undefined reference to `add_empty_card'
-input.c:(.text+0x3e3): undefined reference to `add_empty_card'
-input.c:(.text+0x4eb): undefined reference to `add_card_to'
-input.c:(.text+0x53b): undefined reference to `add_empty_card'
-test-input.o: In function `simple_hand_from_string':
-/home/drew/poker/graders/test-input.c:16: undefined reference to `add_card_to'
-test-input.o: In function `main':
-/home/drew/poker/graders/test-input.c:100: undefined reference to `free_deck'
-/home/drew/poker/graders/test-input.c:102: undefined reference to `free_deck'
-collect2: error: ld returned 1 exit status
-Linking failed
+Testing with input file with 
+ o 1 hand
+ o No unknown/future cards
+Your file matched the expected output
+Test case passed
+Testing with input file with 
+ o Many hands
+ o No unknown/future cards
+Your file matched the expected output
+Test case passed
+Testing with input file with 
+ o Many hands
+ o 1 unknown/future cards per hand
+Your file matched the expected output
+Test case passed
+Testing with input file with 
+ o Many hands
+ o Many unknown/future cards per hand
+Your file matched the expected output
+Test case passed
 
-Overall Grade: F
+Overall Grade: A
