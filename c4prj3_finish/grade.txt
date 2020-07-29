@@ -1,4 +1,4 @@
-Grading at Wed Jul 29 17:18:55 UTC 2020
+Grading at Wed Jul 29 17:20:29 UTC 2020
 Running 'make clean' to do a clean build of your project
 rm -rf *.o poker *~
 Running 'make poker OTHERFLAGS=-O3' to build your project
@@ -8,10 +8,10 @@ gcc -Wall -Werror -ggdb3 -std=gnu99 -pedantic -O3   -c -o eval.o eval.c
 gcc -Wall -Werror -ggdb3 -std=gnu99 -pedantic -O3   -c -o future.o future.c
 gcc -Wall -Werror -ggdb3 -std=gnu99 -pedantic -O3   -c -o input.o input.c
 gcc -Wall -Werror -ggdb3 -std=gnu99 -pedantic -O3   -c -o main.o main.c
-gcc -o3 poker -Wall -Werror -ggdb3 -std=gnu99 -pedantic -O3 cards.o deck.o eval.o future.o input.o main.o
-gcc: error: poker: No such file or directory
+GCC -O3 poker -Wall -Werror -ggdb3 -std=gnu99 -pedantic -O3 cards.o deck.o eval.o future.o input.o main.o
+make: GCC: Command not found
 Makefile:4: recipe for target 'poker' failed
-make: *** [poker] Error 1
+make: *** [poker] Error 127
 make failed
 
 Overall Grade: F
