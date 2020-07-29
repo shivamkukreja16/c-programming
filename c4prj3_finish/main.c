@@ -7,9 +7,6 @@
 #include "eval.h"
 #include "future.h"
 #include "input.h"
-
-
-
 int main(int argc, char ** argv) {
   if(argc<2)
     {
@@ -39,8 +36,7 @@ int main(int argc, char ** argv) {
     {
       winCountArray[i]=0;
     }
-  // monte carlo trials
-  // we will do it num_trial times
+  
   for(int i=0; i<num_trials; i++)
     {
       shuffle(remainingDeck);

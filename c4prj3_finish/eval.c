@@ -118,13 +118,6 @@ int is_there_ACE_low( deck_t *hand, size_t index){
       if( k+1 >= hand->n_cards){ break ;}
     }
     if(count >= 4){
-      /*int count3=0;
-	for(int v=0; v<4; v++){
-	  if((hand->cards[v]->value) == 14){
-	      count3++;
-	        }
-		}
-		if(count3 >0){*/
       return -1;
     }
   }
@@ -284,21 +277,6 @@ int compare_hands(deck_t * hand1, deck_t * hand2) {
   }
   return 0;
 }
-
-
-
-//this function
-//   allocates an array of unsigned ints with as
-//      many elements as there are cards in the hand.
-//      It then fills in this array with
-//      the "match counts" of the corresponding cards.
-//For example,
-//   given
-//        Ks Kh Qs Qh 0s 9d 9c 9h
-//      This function would return
-//        2  2  2  2  1  3  3  3
-//   because there are 2 kings, 2 queens,
-//  1 ten, and 3 nines.
 unsigned * get_match_counts(deck_t * hand){
   unsigned *match = malloc((hand->n_cards)*sizeof(*match));
   for(int p=0; p<hand->n_cards; p++){
@@ -324,12 +302,6 @@ unsigned * get_match_counts(deck_t * hand){
   return match;
 }
 
-
-//This function copies a straight starting at index "ind" from deck "from".
-//This copies "count" cards (typically 5).
-//into the card array "to"
-//if "fs" is NUM_SUITS, then suits are ignored.
-//if "fs" is any other value, a straight flush (of that suit) is copied.
 void copy_straight(card_t ** to, deck_t *from, size_t ind, suit_t fs, size_t count) {
   assert(fs == NUM_SUITS || from->cards[ind]->suit == fs);
   unsigned nextv = from->cards[ind]->value;
@@ -348,13 +320,6 @@ void copy_straight(card_t ** to, deck_t *from, size_t ind, suit_t fs, size_t cou
     ind++;
   }
 }
-
-
-//This looks for a straight (or straight flush if "fs" is not NUM_SUITS)
-// in "hand".  It calls the student's is_straight_at for each possible
-// index to do the work of detecting the straight.
-// If one is found, copy_straight is used to copy the cards into
-// "ans".
 int find_straight(deck_t * hand, suit_t fs, hand_eval_t * ans) {
   if (hand->n_cards < 5){
     return 0;
@@ -384,10 +349,6 @@ int find_straight(deck_t * hand, suit_t fs, hand_eval_t * ans) {
   return 0;
 }
 
-
-//This function puts all the hand evaluation logic together.
-//This function is longer than we generally like to make functions,
-//and is thus not so great for readability :(
 hand_eval_t evaluate_hand(deck_t * hand) {
   suit_t fs = flush_suit(hand);
   hand_eval_t ans;
